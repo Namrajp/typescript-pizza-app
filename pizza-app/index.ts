@@ -21,19 +21,29 @@ const menu = [
   },
 ];
 type Pizza = {
-  name: string,
-  price: number,
+  name: string;
+  price: number;
 };
 
-const cashInRegister = 100;
-const nextOrderId = 1;
-const orderQueue = [];
+type Order = {
+  id: number;
+  pizza: Pizza;
+  time: Date;
+  status: string;
+};
 
-function addNewPizza(pizzaObj) {
+let cashInRegister = 100;
+let nextOrderId = 1;
+const orderQueue: Order[] = [];
+
+function addNewPizza(pizzaObj: Pizza) {
   menu.push(pizzaObj);
 }
-function placeOrder(pizzaName) {
+function placeOrder(pizzaName: string) {
   const selectedPizza = menu.find((pizzaObj) => pizzaObj.name === pizzaName);
+  if (!selectedPizza) {
+    return "Pizza not found on the menu.";
+  }
   cashInRegister += selectedPizza.price;
   const newOrder = {
     id: nextOrderId++,
@@ -41,58 +51,31 @@ function placeOrder(pizzaName) {
     time: new Date(),
     status: "ordered",
   };
-  orderQuerue.push(newOrder);
+  orderQueue.push(newOrder);
   return newOrder;
 }
-function completeOrder(orderId) {
+function completeOrder(orderId: number) {
   if (orderQueue.length === 0) {
     return "All orders have been fulfilled!";
   } else {
     const order = orderQueue.find((order) => order.id === orderId);
+    if (!order) {
+      // console.error(`Order with ID ${orderId} not found in the orderQueue.`);
+      //  throw new Error("Order not found");
+      return;
+    }
     order.status = "completed";
     return order;
   }
 }
 
-addNewPizza({ name: "Meat Lovers", cost: 12 });
-addNewPizza({ name: "Spicy Sausage", cost: 12 });
-addNewPizza({ name: "BBQ Chicken", cost: 11 });
+addNewPizza({ name: "Meat Lovers", price: 12 });
+addNewPizza({ name: "Spicy Sausage", price: 12 });
+addNewPizza({ name: "BBQ Chicken", price: 11 });
 
 placeOrder("Meat Lovers");
-completeOrder("1");
+completeOrder(1);
 
 console.log("Menu:", menu);
-console.log("Order queue:", orderQuerue);
+console.log("Order queue:", orderQueue);
 console.log("Cash in Register:", cashInRegister);
-
-type Person = {
-  name: string,
-  age: number,
-  isStudent: boolean,
-  addresss: {
-    street: string,
-    city: string,
-    zipCode: string,
-  },
-};
-
-const person1: Person = {
-  name: "Alice",
-  age: 23,
-  isStudent: true,
-  address: {
-    street: "123 Main St",
-    city: "Wonderland",
-    zipCode: "12345",
-  },
-};
-const person2: Person = {
-  name: "Bob",
-  age: 30,
-  isStudent: false,
-  address: {
-    street: "456 Elm St",
-    city: "Builderburg",
-    zipCode: "67890",
-  },
-};
